@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.conexionprueba.Modales.MostrarAyuda;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,7 +29,7 @@ public class mostrarDatos extends AppCompatActivity {
 
     private RecyclerView recyclerViewAuto;
     private RecyclerViewAdaptador adaptadorAuto;
-
+    private String user;
     //Declarando variables para el encabezado
     TextView usuarioTxt, btnCambiar;
     Button salirBtn;
@@ -39,10 +40,16 @@ public class mostrarDatos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mostrar_datos);
 
-        recyclerViewAuto=(RecyclerView)findViewById(R.id.recyclerAuto);
+        recyclerViewAuto = (RecyclerView) findViewById(R.id.recyclerAuto);
         recyclerViewAuto.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewAuto.setAdapter(adaptadorAuto);
 
-        adaptadorAuto=new RecyclerViewAdaptador(obtenerAutoBD());
+        salirBtn = (Button) findViewById(R.id.btnGuardar); //Boton para cerrar sesión
+        btnCambiar = (TextView) findViewById(R.id.btnCambiar); //Para cambiar la contraseña del usuario actual.
+        usuarioTxt = (TextView) findViewById(R.id.usuarioTxt); //Nombre del usuario iniciado
+        imgAyuda = (ImageView) findViewById(R.id.imgAyuda); //Buscando la imagen para mostrar ayuda.
+        mostrarUsuario();
+        adaptadorAuto = new RecyclerViewAdaptador(obtenerAutoBD());
 
 
         //Cuerpo del evento para la vista.
@@ -53,15 +60,10 @@ public class mostrarDatos extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Seleccion: ",Toast.LENGTH_SHORT).show();
             }
         });*/
-        recyclerViewAuto.setAdapter(adaptadorAuto);
 
-        salirBtn=(Button)findViewById(R.id.btnGuardar); //Boton para cerrar sesión
-        btnCambiar=(TextView)findViewById(R.id.btnCambiar); //Para cambiar la contraseña del usuario actual.
-        usuarioTxt=(TextView)findViewById(R.id.usuarioTxt); //Nombre del usuario iniciado
-        imgAyuda=(ImageView)findViewById(R.id.imgAyuda); //Buscando la imagen para mostrar ayuda.
 
-  //      btnVer=(Button)findViewById(R.id.btnVer);
-        mostrarUsuario();
+        //      btnVer=(Button)findViewById(R.id.btnVer);
+
 /*
         btnVer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,79 +96,89 @@ public class mostrarDatos extends AppCompatActivity {
     }
 
     //Invocando la funcion para abrir un modal de ayuda.
-    public void openDialog(){
-        MostrarAyuda exampleDialog=new MostrarAyuda();
-        exampleDialog.show(getSupportFragmentManager(),"example dialog");
+    public void openDialog() {
+        MostrarAyuda exampleDialog = new MostrarAyuda();
+        exampleDialog.show(getSupportFragmentManager(), "example dialog");
     }
 
     //Funcion para realizar la conexion con SQL server
-    public Connection conexionBD(){
-        Connection conexion=null;
-        try{
-            StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
+    public Connection conexionBD() {
+        Connection conexion = null;
+        try {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             Class.forName("net.sourceforge.jtds.jdbc.Driver").newInstance();
-            conexion= DriverManager.getConnection("jdbc:jtds:sqlserver://ifix.database.windows.net;databaseName=ifixdb;user=raulballeza;password=ifixdb_ads_68;");
+            conexion = DriverManager.getConnection("jdbc:jtds:sqlserver://ifix.database.windows.net;databaseName=ifixdb;user=raulballeza;password=ifixdb_ads_68;");
 
-        }catch(Exception e){
-            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
         return conexion;
     }
 
-    public List<tipoAuto> obtenerAutoBD(){
-        List<tipoAuto> sc=new ArrayList<>();
-        try{
-            Statement st=conexionBD().createStatement();
-            ResultSet rs=st.executeQuery("SELECT * FROM vehiculo");
-            while(rs.next()){
-                sc.add(new tipoAuto(rs.getString("marca"),rs.getString("modelo"),rs.getString("anio"),rs.getString("alarma"),R.drawable.auto));
+    public List<tipoAuto> obtenerAutoBD() {
+        List<tipoAuto> sc = new ArrayList<>();
+        try {
+            CallableStatement cstmt = null;
+            ResultSet rs = null;
+            cstmt = conexionBD().prepareCall(
+                    "{call dbo.obtenerVehiculos_Cliente(?)}",
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+
+            cstmt.setString(1, user);
+            cstmt.execute();
+            rs = cstmt.getResultSet();
+            while (rs.next()) {
+
+                Toast.makeText(getApplicationContext(), rs.getString("marca"), Toast.LENGTH_LONG).show();
+                sc.add(new tipoAuto(rs.getString("marca"), rs.getString("modelo"), rs.getString("anio"), rs.getString("alarma"), R.drawable.auto));
             }
-        }catch (SQLException e){
-            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (SQLException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return sc;
     }
 
 
     //Funcion para mostrar el usuario logueado.
-    public void mostrarUsuario(){
-        try{
-            Statement stm=conexionBD().createStatement();
-            ResultSet rs= stm.executeQuery("SELECT * FROM sesion");
+    public void mostrarUsuario() {
+        try {
+            Statement stm = conexionBD().createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM sesion");
 
-            if(rs.next()){
+            if (rs.next()) {
                 usuarioTxt.setText(rs.getString(1));
+                user = rs.getString(1);
             }
-        }catch (Exception e){
-            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     //Funcion para cerrar sesion
-    public void cerrarSesion(){
-        try{
-            PreparedStatement pst=conexionBD().prepareStatement("DELETE sesion");
+    public void cerrarSesion() {
+        try {
+            PreparedStatement pst = conexionBD().prepareStatement("DELETE sesion");
             pst.executeUpdate();
 
 
-            Toast.makeText(getApplicationContext(),"El usuario cerrado sesión.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "El usuario cerrado sesión.", Toast.LENGTH_SHORT).show();
             //Dirigiendonos a la activity de login.
-            Intent inicio=new Intent(mostrarDatos.this,login.class);
+            Intent inicio = new Intent(mostrarDatos.this, login.class);
             startActivity(inicio);
-        }
-        catch(Exception e){
-            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void cambiarContrasena(){
-        Intent sc=new Intent(mostrarDatos.this,MainActivity.class);
+    public void cambiarContrasena() {
+        Intent sc = new Intent(mostrarDatos.this, MainActivity.class);
 
         //Creando instancia para guardar los valores que seran enviados a otra activity.
-        Bundle miBundle=new Bundle();
-        miBundle.putString("usuario",usuarioTxt.getText().toString());
+        Bundle miBundle = new Bundle();
+        miBundle.putString("usuario", usuarioTxt.getText().toString());
 
         //Enviando datos a otra activity.
         sc.putExtras(miBundle);
@@ -175,8 +187,7 @@ public class mostrarDatos extends AppCompatActivity {
     }
 
 
-
-    public void checar(){
+    public void checar() {
         Toast.makeText(getApplicationContext(), "El usuario no existe.", Toast.LENGTH_SHORT).show();
     }
 

@@ -43,7 +43,7 @@ public class RecyclerViewAdaptador extends RecyclerView.Adapter<RecyclerViewAdap
         public void onClick(View view){
             switch (view.getId()){
                 case R.id.btnVer:
-                    Intent intent = new Intent(context, MainActivity.class);
+                    Intent intent = new Intent(context, verDetalles.class);
                     context.startActivity(intent);
                     break;
             }
