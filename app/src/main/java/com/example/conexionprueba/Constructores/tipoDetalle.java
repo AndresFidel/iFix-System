@@ -6,12 +6,13 @@ public class tipoDetalle {
     Todos los servicios
     Nombre, fecha que se hizo y el costo.
      */
-    private String nombreDetalle, fechaDetalle, costoDetalle;
+    private String nombreDetalle, fechaDetalle, costoDetalle, estadoDetalle;
 
-    public tipoDetalle(String nombreDetalle, String fechaDetalle, String costoDetalle){
-        this.nombreDetalle=nombreDetalle;
-        this.fechaDetalle=fechaDetalle;
-        this.costoDetalle=costoDetalle;
+    public tipoDetalle(String nombreDetalle, String fechaDetalle, String costoDetalle, String estadoDetalle) {
+        this.nombreDetalle = nombreDetalle;
+        this.fechaDetalle = fechaDetalle;
+        this.costoDetalle = costoDetalle;
+        this.estadoDetalle = estadoDetalle;
     }
 
     public String getNombreDetalle() {
@@ -36,5 +37,13 @@ public class tipoDetalle {
 
     public void setCostoDetalle(String costoDetalle) {
         this.costoDetalle = costoDetalle;
+    }
+
+    public String getEstadoDetalle() {
+        return estadoDetalle;
+    }
+
+    public void setEstadoDetalle(String estadoDetalle) {
+        this.estadoDetalle = estadoDetalle;
     }
 }

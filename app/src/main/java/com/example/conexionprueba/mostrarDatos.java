@@ -13,9 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.conexionprueba.Adaptadores.RecyclerViewAdaptador;
+import com.example.conexionprueba.Constructores.tipoAuto;
+import com.example.conexionprueba.Database.TransNoTrans;
+import com.example.conexionprueba.Database.connectionAzure;
 import com.example.conexionprueba.Modales.MostrarAyuda;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,11 +32,15 @@ public class mostrarDatos extends AppCompatActivity {
 
     private RecyclerView recyclerViewAuto;
     private RecyclerViewAdaptador adaptadorAuto;
-    private String user;
+    String user;
     //Declarando variables para el encabezado
     TextView usuarioTxt, btnCambiar;
     Button salirBtn;
     ImageView imgAyuda;
+
+    //Conexion a la base de datos Azure;
+    connectionAzure conn = new connectionAzure();
+    TransNoTrans TNT = new TransNoTrans(conn);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +49,14 @@ public class mostrarDatos extends AppCompatActivity {
 
         recyclerViewAuto = (RecyclerView) findViewById(R.id.recyclerAuto);
         recyclerViewAuto.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAuto.setAdapter(adaptadorAuto);
+
 
         salirBtn = (Button) findViewById(R.id.btnGuardar); //Boton para cerrar sesión
         btnCambiar = (TextView) findViewById(R.id.btnCambiar); //Para cambiar la contraseña del usuario actual.
         usuarioTxt = (TextView) findViewById(R.id.usuarioTxt); //Nombre del usuario iniciado
         imgAyuda = (ImageView) findViewById(R.id.imgAyuda); //Buscando la imagen para mostrar ayuda.
+
+        //      btnVer=(Button)findViewById(R.id.btnVer);
         mostrarUsuario();
         adaptadorAuto = new RecyclerViewAdaptador(obtenerAutoBD());
 
@@ -60,10 +69,7 @@ public class mostrarDatos extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Seleccion: ",Toast.LENGTH_SHORT).show();
             }
         });*/
-
-
-        //      btnVer=(Button)findViewById(R.id.btnVer);
-
+        recyclerViewAuto.setAdapter(adaptadorAuto);
 /*
         btnVer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,42 +107,15 @@ public class mostrarDatos extends AppCompatActivity {
         exampleDialog.show(getSupportFragmentManager(), "example dialog");
     }
 
-    //Funcion para realizar la conexion con SQL server
-    public Connection conexionBD() {
-        Connection conexion = null;
-        try {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-            Class.forName("net.sourceforge.jtds.jdbc.Driver").newInstance();
-            conexion = DriverManager.getConnection("jdbc:jtds:sqlserver://ifix.database.windows.net;databaseName=ifixdb;user=raulballeza;password=ifixdb_ads_68;");
-
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
-        }
-        return conexion;
-    }
-
     public List<tipoAuto> obtenerAutoBD() {
         List<tipoAuto> sc = new ArrayList<>();
         try {
-            CallableStatement cstmt = null;
-            ResultSet rs = null;
-            cstmt = conexionBD().prepareCall(
-                    "{call dbo.obtenerVehiculos_Cliente(?)}",
-                    ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
-
-            cstmt.setString(1, user);
-            cstmt.execute();
-            rs = cstmt.getResultSet();
+            ResultSet rs = TNT.getClienteVehicles(user);
             while (rs.next()) {
-
-                Toast.makeText(getApplicationContext(), rs.getString("marca"), Toast.LENGTH_LONG).show();
-                sc.add(new tipoAuto(rs.getString("marca"), rs.getString("modelo"), rs.getString("anio"), rs.getString("alarma"), R.drawable.auto));
+                sc.add(new tipoAuto(rs.getString("marca"), rs.getString("modelo"), rs.getString("anio"), rs.getString("num_serie"), R.drawable.auto, rs.getString("id_vehiculo")));
             }
         } catch (SQLException e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return sc;
     }
@@ -145,8 +124,7 @@ public class mostrarDatos extends AppCompatActivity {
     //Funcion para mostrar el usuario logueado.
     public void mostrarUsuario() {
         try {
-            Statement stm = conexionBD().createStatement();
-            ResultSet rs = stm.executeQuery("SELECT * FROM sesion");
+            ResultSet rs = TNT.verifyPreviousLogIn();
 
             if (rs.next()) {
                 usuarioTxt.setText(rs.getString(1));
@@ -160,7 +138,7 @@ public class mostrarDatos extends AppCompatActivity {
     //Funcion para cerrar sesion
     public void cerrarSesion() {
         try {
-            PreparedStatement pst = conexionBD().prepareStatement("DELETE sesion");
+            PreparedStatement pst = TNT.logOut();
             pst.executeUpdate();
 
 

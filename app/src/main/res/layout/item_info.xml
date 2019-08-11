@@ -10,14 +10,8 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp">
-
-        <ImageView
-            android:id="@+id/Gradient"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/gradient_color" />
+        android:layout_marginBottom="5dp"
+        app:cardCornerRadius="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,8 +61,15 @@
                     android:id="@+id/infoFecha"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Fecha:"
+                    android:text="No. de serie:"
                     android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:visibility="invisible" />
             </LinearLayout>
 
             <LinearLayout
