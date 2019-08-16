@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    tools:context=".controllers.mostrarDatos">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imgUser"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/imagen" />
+
+        <TextView
+            android:id="@+id/infoUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="200px"
+            android:height="60px"
+            android:text="Usuario:"
+            android:textColor="#FF8800"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/usuarioTxt"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:width="340px"
+            android:height="60px"
+            android:text="TextView"
+            android:textColor="#C1363636"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:id="@+id/imgAyuda"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ayuda" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="221dp"
+        android:layout_height="71dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="85dp"
+        android:layout_marginLeft="85dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="86dp"
+        android:layout_marginRight="86dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/btnCambiar"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="5dp"
+            android:text="Cambiar contraseña"
+            android:textColor="#0326FF"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loginBtn" />
+
+        <Button
+            android:id="@+id/btnGuardar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:width="350px"
+            android:background="@drawable/button_round"
+            android:text="Cerrar sesión"
+            android:textColor="#ffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="390dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="120dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/btnLupa"
+            android:layout_width="89dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/lupa" />
+
+        <EditText
+            android:id="@+id/txtBuscar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="40dp"
+            android:ems="12"
+            android:hint="Buscar Marcar/Modelo/Año"
+            android:inputType="textPersonName"
+            android:textColor="#FF8800"
+            android:textColorHint="#B7FF8800"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnLupa"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerAuto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="175dp" />
+
+</RelativeLayout>
