@@ -8,7 +8,7 @@
     android:layout_marginTop="10dp"
     android:layout_marginRight="10dp"
     android:layout_marginBottom="10dp"
-    tools:context=".mostrarDatos">
+    tools:context=".controllers.mostrarDatos">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -100,25 +100,25 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/lupaBtn"
+            android:id="@+id/btnLupa"
             android:layout_width="89dp"
             android:layout_height="40dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/lupa" />
 
         <EditText
-            android:id="@+id/txtPass"
+            android:id="@+id/txtBuscar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="40dp"
             android:ems="12"
-            android:hint="Buscar vehículo"
+            android:hint="Buscar Marcar/Modelo/Año"
             android:inputType="textPersonName"
             android:textColor="#FF8800"
             android:textColorHint="#B7FF8800"
             android:textSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/lupaBtn"
+            app:layout_constraintStart_toEndOf="@+id/btnLupa"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
 

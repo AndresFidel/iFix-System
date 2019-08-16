@@ -1,20 +1,23 @@
 package com.example.conexionprueba.Constructores;
 
 public class tipoAuto {
-    private String modelo;
-    private String marca;
-    private String ano;
-    private String fecha;
-    private String id;
+    private String modelo,marca,ano,noAuto;
     private int imgAuto;
 
-    public tipoAuto(String modelo, String marca, String ano, String fecha, int imgAuto, String id) {
+    public tipoAuto(String noAuto, String modelo, String marca, String ano, int imgAuto) {
+        this.noAuto=noAuto;
         this.modelo = modelo;
         this.marca = marca;
         this.imgAuto = imgAuto;
-        this.ano = ano;
-        this.fecha = fecha;
-        this.id = id;
+        this.ano=ano;
+    }
+
+    public String getNoAuto() {
+        return noAuto;
+    }
+
+    public void setNoAuto(String noAuto) {
+        this.noAuto = noAuto;
     }
 
     public String getModelo() {
@@ -34,22 +37,14 @@ public class tipoAuto {
     }
 
     //Constructor de año
-    public String getAno() {
+    public String getAno(){
         return ano;
     }
 
-    public void setAno(String ano) {
-        this.ano = ano;
+    public void setAno(String ano){
+        this.ano=ano;
     }
 
-    //Constructor de fecha
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
 
     public int getImgAuto() {
         return imgAuto;
@@ -59,11 +54,4 @@ public class tipoAuto {
         this.imgAuto = imgAuto;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 }

@@ -1,35 +1,36 @@
 package com.example.conexionprueba;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.conexionprueba.Database.TransNoTrans;
 import com.example.conexionprueba.Database.connectionAzure;
 import com.example.conexionprueba.Modales.AyudaGuardarCambios;
-import com.example.conexionprueba.Modales.MostrarAyuda;
+import com.example.conexionprueba.controllers.mostrarDatos;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 public class MainActivity extends AppCompatActivity {
 
     //Declarando variables
-    TextView txtUsuario, txtPass, txtNewPass, txtConfirmar;
+    TextView txtUsuario;
+    EditText txtPass, txtNewPass, txtConfirmar;
     ImageView imgAyuda;
     Button btnGuardar;
+
+    //Conexion a la base de datos Azure
     connectionAzure conn = new connectionAzure();
     TransNoTrans TNT = new TransNoTrans(conn);
 
@@ -39,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txtUsuario = (TextView) findViewById(R.id.txtUsuario); //Nombre del usuario iniciado
-        txtPass = (TextView) findViewById(R.id.txtPass); //Para la contraseña actual
-        txtNewPass = (TextView) findViewById(R.id.txtNewPass);  //Para la nueva contraseña
-        txtConfirmar = (TextView) findViewById(R.id.txtConfirmar); //Para confirmar la contraseña
+        txtPass = (EditText) findViewById(R.id.txtPass); //Para la contraseña actual
+        txtNewPass = (EditText) findViewById(R.id.txtNewPass);  //Para la nueva contraseña
+        txtConfirmar = (EditText) findViewById(R.id.txtConfirmar); //Para confirmar la contraseña
         imgAyuda = (ImageView) findViewById(R.id.imgAyuda); //Buscando la imagen para mostrar ayuda.
         btnGuardar = (Button) findViewById(R.id.btnGuardar); //Boton para guardar los cambios.
 
@@ -100,28 +101,76 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public boolean comprobarUsuario() {
+        String pass, passReal;
+        boolean bandera = true;
+        pass = txtPass.getText().toString();
+        try {
+            ResultSet rs = (ResultSet) TNT.verifyUser(txtUsuario.getText().toString());
+            if (rs.next()) {
+                passReal = rs.getString(4);
+                if (pass.equals(passReal)) {
+                    Log.e("Error", "Contraseña correcta");
+                } else {
+                    bandera = false;
+                }
+            } else {
+                bandera = false;
+            }
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Ha ocurrido un error", Toast.LENGTH_SHORT).show();
+        }
+        return bandera;
+    }
+
     //Evento para guardar la nueva contraseña del usuario actual. DEMO
     public void guardarCambios() {
+        boolean bandera = true;
+        String vtxtPass, vtxtNewPass, vtxtConfirmar;
+        vtxtPass = txtPass.getText().toString();
+        vtxtNewPass = txtNewPass.getText().toString();
+        vtxtConfirmar = txtConfirmar.getText().toString();
         try {
-            ResultSet rs = TransNoTrans.verifyUser(txtUsuario.getText().toString());
-            //ResultSet rs= cc.executeQuery("")
+            ResultSet rs = (ResultSet) TNT.verifyUser(txtUsuario.getText().toString());
 
-            if (txtPass.getText() == "" || txtNewPass.getText() == "" || txtConfirmar.getText() == "") {
+            if (vtxtPass.equals("") && vtxtConfirmar.equals("") && vtxtNewPass.equals("")) {
                 Toast.makeText(getApplicationContext(), "Campos ingresados no válidos.", Toast.LENGTH_SHORT).show();
-            } else {
+                txtPass.setError("Favor de completar el campo.");
+                txtNewPass.setError("Favor de completar el campo.");
+                txtPass.setError("Favor de completar el campo.");
+                bandera = false;
+            }
+
+            if (!vtxtNewPass.equals(vtxtConfirmar)) {
+                Toast.makeText(getApplicationContext(), "Verificar que la contraseña sean iguales.", Toast.LENGTH_SHORT).show();
+                txtNewPass.setError("Vuelve a ingresar la nueva contraseña.");
+                txtConfirmar.setError("Vuelve a ingresar la nueva contraseña.");
+                txtNewPass.setText("");
+                txtConfirmar.setText("");
+                bandera = false;
+            }
+
+            if (!comprobarUsuario()) {
+                Toast.makeText(getApplicationContext(), "La contraseña actual no es la correcta.", Toast.LENGTH_SHORT).show();
+                txtPass.setError("La contraseña es incorrecta.");
+                txtPass.setText("");
+                bandera = false;
+            }
+
+            if (bandera == true) {
                 if (rs.next()) {
-                    //Se realiza la sentencia para modificar la contraseña.
+                    //Se realiza la sentencia para modificar la contraseña
                     PreparedStatement pst = TNT.updatePassword(txtUsuario.getText().toString(), txtConfirmar.getText().toString());
                     pst.executeUpdate();
+
                     Toast.makeText(getApplicationContext(), "La contraseña ha sido actualizada!", Toast.LENGTH_SHORT).show();
-                    txtPass.setText("");
-                    txtNewPass.setText("");
-                    txtConfirmar.setText("");
                     //En caso de cambiar la contraseña, cambiaremos a la activity del menu.
                     Intent siguiente = new Intent(MainActivity.this, mostrarDatos.class);
                     startActivity(siguiente);
 
                 }
+            } else {
+                Log.e("Exito", "Campos completados");
             }
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

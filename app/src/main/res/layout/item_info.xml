@@ -10,8 +10,37 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
-        app:cardCornerRadius="8dp">
+        android:layout_marginBottom="5dp">
+
+        <ImageView
+            android:id="@+id/Gradient"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/gradient_color" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/infoNoAuto"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="No. Automóvil:"
+                android:textColor="#EB1100"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtNoAuto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:text="TextView" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,19 +86,6 @@
                     android:text="Año:"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/infoFecha"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="No. de serie:"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/txtId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:visibility="invisible" />
             </LinearLayout>
 
             <LinearLayout
@@ -101,18 +117,16 @@
                     android:text="TextView"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/txtFecha"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="12sp" />
-
                 <Button
                     android:id="@+id/btnVer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ver mas" />
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="#2196F3"
+                    android:text="Ver mas"
+                    android:textColor="#fff" />
 
             </LinearLayout>
         </LinearLayout>

@@ -1,7 +1,6 @@
 package com.example.conexionprueba.Database;
 
 import android.os.StrictMode;
-import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
